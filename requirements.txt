@@ -1,0 +1,19 @@
+# Core data & charting
+pandas==2.2.2
+plotly==5.22.0
+yfinance==0.2.37
+
+# OpenAI function-calling
+openai==1.30.1
+
+# Environment/config
+python-dotenv==1.0.1
+
+# Testing
+pytest==8.2.2
+
+# Optional fallback (stub only, not actively used)
+alphavantage-python==1.0.4  # Safe to pin, but unused unless fallback is activated
+
+# Compatibility metadata (PEP 621)
+# Python version: >=3.12
