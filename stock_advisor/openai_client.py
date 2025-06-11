@@ -29,18 +29,29 @@ class OpenAIClient:
         openai.api_key = self.api_key
 
     def chat(
-        self, messages: List[Dict[str, str]], retries: int = 3, backoff: float = 0.5
+        self,
+        messages: List[Dict[str, str]],
+        *,
+        functions: List[Dict[str, Any]] | None = None,
+        function_call: Dict[str, Any] | None = None,
+        retries: int = 3,
+        backoff: float = 0.5,
     ) -> Any:
         """Send a chat completion request."""
         logger.debug("Sending chat request")
         last_exc: Exception | None = None
         for attempt in range(retries):
             try:
-                return openai.ChatCompletion.create(
-                    model="o4-mini",
-                    messages=messages,
-                    timeout=30,
-                )
+                params = {
+                    "model": "o4-mini",
+                    "messages": messages,
+                    "timeout": 30,
+                }
+                if functions is not None:
+                    params["functions"] = functions
+                if function_call is not None:
+                    params["function_call"] = function_call
+                return openai.ChatCompletion.create(**params)
             except Exception as exc:  # pragma: no cover - network issues
                 last_exc = exc
                 if exc.__class__.__name__ == "RateLimitError":
