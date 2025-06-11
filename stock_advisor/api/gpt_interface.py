@@ -9,6 +9,7 @@ import re
 from typing import Dict, Any
 
 from stock_advisor.openai_client import OpenAIClient
+from config import settings
 
 DEBUG = True
 
@@ -35,7 +36,7 @@ FUNCTION_SCHEMA = {
     },
 }
 
-client = OpenAIClient()
+client = OpenAIClient(api_key=settings.openai_api_key)
 
 
 def interpret_prompt(prompt: str) -> Dict[str, Any]:

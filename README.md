@@ -38,3 +38,10 @@ pre-commit install
 python -m stock_advisor --query "Show me AAPL for last week" --output_dir output
 ```
 
+```yaml
+# ── Secrets in CI ───────────────────────
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  RUN_OPENAI_TESTS: "true"
+```
+

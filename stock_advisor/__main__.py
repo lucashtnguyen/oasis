@@ -90,9 +90,18 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--input", help="JSON input string")
     parser.add_argument("--output_dir", default="output", help="Output directory")
     parser.add_argument("--show", action="store_true", help="Display chart")
+    parser.add_argument(
+        "--use-env",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Load variables from .env (default) or rely solely on OS env vars.",
+    )
     args = parser.parse_args(argv)
 
     logger.debug("CLI called with %s", args)
+
+    if not args.use_env:
+        os.environ.pop("PYTHON_DOTENV", None)
 
     input_data = None
     if args.input:
