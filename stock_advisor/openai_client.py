@@ -37,7 +37,7 @@ class OpenAIClient:
         for attempt in range(retries):
             try:
                 return openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
+                    model="o4-mini",
                     messages=messages,
                     timeout=30,
                 )
