@@ -1,8 +1,9 @@
-"""GPT prompt interpreter."""
+"""GPT prompt interpreter using function-calling."""
 
 from __future__ import annotations
 
 import io
+import json
 import logging
 import re
 from typing import Dict, Any
@@ -20,6 +21,20 @@ if DEBUG:
     logger.addHandler(handler)
 
 
+FUNCTION_SCHEMA = {
+    "name": "get_stock_chart",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "ticker": {"type": "string"},
+            "timeframe": {"type": "string"},
+            "interval": {"type": "string"},
+            "chart_type": {"type": "string"},
+        },
+        "required": ["ticker"],
+    },
+}
+
 client = OpenAIClient()
 
 
@@ -29,10 +44,23 @@ def interpret_prompt(prompt: str) -> Dict[str, Any]:
     if not prompt.strip():
         return {}
     try:
-        response = client.chat([{"role": "user", "content": prompt}])
+        response = client.chat(
+            [{"role": "user", "content": prompt}],
+            functions=[FUNCTION_SCHEMA],
+            function_call={"name": "get_stock_chart"},
+        )
         logger.debug("GPT response: %s", response)
+        args = (
+            response["choices"][0]["message"]
+            .get("function_call", {})
+            .get("arguments", "{}")
+        )
+        data = json.loads(args)
     except Exception as exc:  # pragma: no cover - network fallback
         logger.debug("GPT call failed: %s", exc)
-        response = {}
-    tickers = re.findall(r"\b[A-Z]{1,5}\b", prompt)
-    return {"tickers": tickers, "raw": prompt}
+        data = {}
+    if "ticker" not in data:
+        tickers = re.findall(r"\b[A-Z]{1,5}\b", prompt)
+        if tickers:
+            data["ticker"] = tickers[0]
+    return data

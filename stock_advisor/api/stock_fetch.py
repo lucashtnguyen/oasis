@@ -1,4 +1,4 @@
-"""Stock data retrieval."""
+"""Stock data retrieval utilities."""
 
 from __future__ import annotations
 
@@ -20,13 +20,20 @@ if DEBUG:
     logger.addHandler(handler)
 
 
-def fetch_stock_data(ticker: str, period: str = "1mo") -> pd.DataFrame:
-    """Fetch historical data for a ticker."""
-    logger.debug("Fetching data for %s over %s", ticker, period)
+def fetch_prices(
+    ticker: str,
+    timeframe: str = "1mo",
+    interval: str = "1d",
+) -> pd.DataFrame:
+    """Fetch historical OHLC data."""
+    logger.debug("Fetching %s timeframe=%s interval=%s", ticker, timeframe, interval)
     try:
-        data = yf.download(ticker, period=period)
-    except Exception as exc:  # TODO: narrow exception
+        return yf.download(ticker, period=timeframe, interval=interval)
+    except Exception as exc:  # pragma: no cover - network fallback
         logger.debug("yfinance failed: %s", exc)
-        # TODO: implement Alpha Vantage fallback
+        logger.debug("STUB_ALPHA_VANTAGE")
         return pd.DataFrame()
-    return data
+
+
+# Backwards compatibility
+fetch_stock_data = fetch_prices
