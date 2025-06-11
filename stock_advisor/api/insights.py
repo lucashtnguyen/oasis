@@ -9,6 +9,7 @@ from typing import Any
 import pandas as pd
 
 from stock_advisor.openai_client import OpenAIClient
+from config import settings
 
 DEBUG = True
 
@@ -20,7 +21,7 @@ if DEBUG:
     logger.setLevel(logging.DEBUG)
     logger.addHandler(handler)
 
-client = OpenAIClient()
+client = OpenAIClient(api_key=settings.openai_api_key)
 
 
 def generate_insights(data: pd.DataFrame) -> str:
