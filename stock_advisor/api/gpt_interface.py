@@ -52,7 +52,8 @@ def interpret_prompt(prompt: str) -> Dict[str, Any]:
         )
         logger.debug("GPT response: %s", response)
         args = (
-            response["choices"][0]["message"]
+            response.choices[0]
+            .to_dict()["message"]
             .get("function_call", {})
             .get("arguments", "{}")
         )
