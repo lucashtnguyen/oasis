@@ -13,7 +13,7 @@ python-dotenv==1.0.1
 pytest==8.2.2
 
 # Optional fallback (stub only, not actively used)
-alphavantage-python==1.0.4  # Safe to pin, but unused unless fallback is activated
+# alphavantage-python==1.0.4  # Safe to pin, but unused unless fallback is activated
 
 # Compatibility metadata (PEP 621)
 # Python version: >=3.12
