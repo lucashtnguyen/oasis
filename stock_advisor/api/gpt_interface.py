@@ -9,7 +9,7 @@ import re
 from typing import Dict, Any
 
 from stock_advisor.openai_client import OpenAIClient
-from config import settings
+from stock_advisor.config_settings import settings
 
 DEBUG = True
 

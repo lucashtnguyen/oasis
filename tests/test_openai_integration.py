@@ -2,9 +2,10 @@
 Runs only when RUN_OPENAI_TESTS=true *and* OPENAI_API_KEY is set.
 Execute with: pytest -q tests/test_openai_integration.py
 """
+
 import pytest
 from openai import OpenAI
-from config import settings
+from stock_advisor.config_settings import settings
 
 _skip = not settings.run_openai_tests or not settings.openai_api_key
 pytestmark = pytest.mark.skipif(_skip, reason="Integration tests disabled")
