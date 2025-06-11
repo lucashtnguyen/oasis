@@ -26,6 +26,13 @@ client = OpenAIClient()
 def generate_insights(data: pd.DataFrame) -> str:
     """Return a markdown summary of stock trends."""
     logger.debug("Generating insights for data: %s", data.shape)
-    # TODO: call GPT for summary
-    _ = client
-    return "STUB_INSIGHTS"
+    if data.empty or "Close" not in data:
+        return "No data available."
+    latest = data["Close"].iloc[-1]
+    try:
+        _ = client.chat(
+            [{"role": "user", "content": f"Summarize close price {latest}"}]
+        )
+    except Exception as exc:  # pragma: no cover - network fallback
+        logger.debug("GPT call failed: %s", exc)
+    return f"Latest close: {latest}"

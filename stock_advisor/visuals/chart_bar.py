@@ -22,6 +22,7 @@ if DEBUG:
 def create_bar_chart(data: pd.DataFrame) -> go.Figure:
     """Return a peer comparison bar chart."""
     logger.debug("Creating bar chart")
-    # TODO: build real chart
     fig = go.Figure()
+    for column in data.columns:
+        fig.add_trace(go.Bar(name=column, y=data[column]))
     return fig

@@ -22,6 +22,9 @@ if DEBUG:
 def create_volatility_chart(data: pd.DataFrame) -> go.Figure:
     """Return a volatility chart."""
     logger.debug("Creating volatility chart")
-    # TODO: build real chart
     fig = go.Figure()
+    if not data.empty and "Close" in data:
+        returns = data["Close"].pct_change().dropna()
+        rolling = returns.rolling(window=5).std()
+        fig.add_trace(go.Scatter(y=rolling, mode="lines"))
     return fig

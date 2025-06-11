@@ -28,13 +28,25 @@ class OpenAIClient:
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         openai.api_key = self.api_key
 
-    def chat(self, messages: List[Dict[str, str]], retries: int = 3, backoff: float = 0.5) -> Any:
+    def chat(
+        self, messages: List[Dict[str, str]], retries: int = 3, backoff: float = 0.5
+    ) -> Any:
         """Send a chat completion request."""
         logger.debug("Sending chat request")
+        last_exc: Exception | None = None
         for attempt in range(retries):
             try:
-                return openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)  # TODO: refine
-            except Exception as exc:  # TODO: narrow exception
+                return openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=messages,
+                    timeout=30,
+                )
+            except Exception as exc:  # pragma: no cover - network issues
+                last_exc = exc
+                if exc.__class__.__name__ == "RateLimitError":
+                    logger.debug("OpenAI rate limit: %s", exc)
+                    time.sleep(backoff * (2**attempt))
+                    continue
                 logger.debug("OpenAI request failed: %s", exc)
-                time.sleep(backoff * (2 ** attempt))
-        raise RuntimeError("OpenAI request failed after retries")
+                break
+        raise RuntimeError("OpenAI request failed after retries") from last_exc

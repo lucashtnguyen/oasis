@@ -14,9 +14,17 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest==8.2.2"]
+dev = [
+    "pytest==8.2.2",
+    "pytest-cov==5.0.0",
+    "black==24.4.2",
+    "pre-commit==3.7.0",
+]
 
 [tool.pytest.ini_options]
-addopts = "-ra"
+addopts = "-ra --cov=stock_advisor --cov-fail-under=0"
 testpaths = ["tests"]
+
+[tool.black]
+line-length = 88
 
