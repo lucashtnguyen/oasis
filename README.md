@@ -2,8 +2,8 @@
 
 LLM-assisted tool for fetching and visualizing stock data.
 
-![CI](https://github.com/OWNER/REPO/actions/workflows/python-ci.yml/badge.svg)
-![Coverage](https://codecov.io/gh/OWNER/REPO/branch/main/graph/badge.svg)
+[![CI](https://github.com/OWNER/REPO/actions/workflows/python-ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/python-ci.yml)
+[![Coverage](https://codecov.io/gh/OWNER/REPO/branch/main/graph/badge.svg)](https://codecov.io/gh/OWNER/REPO)
 
 ## Quick-start for contributors
 
@@ -35,6 +35,6 @@ pre-commit install
 5. **Run example**
 
 ```bash
-python -m stock_advisor --help
+python -m stock_advisor --query "Show me AAPL for last week" --output_dir output
 ```
 
