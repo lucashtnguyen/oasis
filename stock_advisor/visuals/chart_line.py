@@ -22,6 +22,7 @@ if DEBUG:
 def create_line_chart(data: pd.DataFrame) -> go.Figure:
     """Return a basic line chart."""
     logger.debug("Creating line chart")
-    # TODO: build real chart
     fig = go.Figure()
+    if not data.empty and "Close" in data:
+        fig.add_trace(go.Scatter(y=data["Close"], mode="lines"))
     return fig

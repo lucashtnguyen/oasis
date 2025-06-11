@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import logging
+import os
 from typing import Any
 
 from dotenv import load_dotenv
@@ -22,5 +23,7 @@ if DEBUG:
 def load_secrets(path: str = ".env") -> None:
     """Load environment variables from a file."""
     logger.debug("Loading secrets from %s", path)
-    # TODO: handle missing file errors
-    load_dotenv(path)
+    if not os.path.exists(path):
+        logger.debug("Env file not found: %s", path)
+        return
+    load_dotenv(path, override=True)
