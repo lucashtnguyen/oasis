@@ -34,3 +34,25 @@ def test_chat_retry(monkeypatch):
     client = OpenAIClient(api_key="test")
     res = client.chat([{"role": "user", "content": "hi"}], retries=2, backoff=0)
     assert res == {"choices": []}
+
+
+def test_chat_with_functions(monkeypatch):
+    """Chat forwards function calling params."""
+
+    received = {}
+
+    def dummy_create(**kwargs):
+        received.update(kwargs)
+        return {"choices": []}
+
+    monkeypatch.setattr(openai.ChatCompletion, "create", dummy_create)
+    client = OpenAIClient(api_key="test")
+    funcs = [{"name": "fn", "parameters": {"type": "object", "properties": {}}}]
+    res = client.chat(
+        [{"role": "user", "content": "hi"}],
+        functions=funcs,
+        function_call={"name": "fn"},
+    )
+    assert res == {"choices": []}
+    assert received["functions"] == funcs
+    assert received["function_call"] == {"name": "fn"}
