@@ -10,13 +10,14 @@ from stock_advisor.visuals.chart_volatility import create_volatility_chart
 
 def test_create_line_chart_smoke():
     """Smoke test for line chart."""
-    fig = create_line_chart(pd.DataFrame({"Close": [1, 2, 3]}))
+    df = pd.DataFrame({("Close", "AAPL"): [1, 2, 3]})
+    fig = create_line_chart(df, "AAPL")
     assert isinstance(fig, go.Figure)
 
 
 def test_create_line_chart_empty():
     """Edge case with empty data."""
-    fig = create_line_chart(pd.DataFrame())
+    fig = create_line_chart(pd.DataFrame(), "AAPL")
     assert isinstance(fig, go.Figure)
 
 
@@ -27,6 +28,6 @@ def test_create_bar_chart_smoke():
 
 
 def test_create_volatility_chart_smoke():
-    df = pd.DataFrame({"Close": [1, 2, 3, 4, 5, 6]})
-    fig = create_volatility_chart(df)
+    df = pd.DataFrame({("Close", "AAPL"): [1, 2, 3, 4, 5, 6]})
+    fig = create_volatility_chart(df, "AAPL")
     assert isinstance(fig, go.Figure)

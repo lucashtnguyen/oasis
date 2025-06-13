@@ -8,6 +8,10 @@ import json
 import logging
 import os
 
+from stock_advisor.api.gpt_interface import interpret_prompt
+from stock_advisor.api.stock_fetch import fetch_prices
+from stock_advisor.api.insights import generate_insights
+from stock_advisor.visuals.chart_line import create_line_chart
 from stock_advisor.api.query import handle_query
 
 
