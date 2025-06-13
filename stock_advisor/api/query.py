@@ -2,8 +2,9 @@ import logging
 from stock_advisor.api.gpt_interface import interpret_prompt
 from stock_advisor.api.insights import generate_insights
 from stock_advisor.api.stock_fetch import fetch_prices
-from stock_advisor.visuals.chart_bar import create_bar_chart
-from stock_advisor.visuals.chart_line import create_line_chart
+from stock_advisor.visuals.chart_bar import plot_peer_comparison
+from stock_advisor.visuals.chart_line import chart_line
+from stock_advisor.visuals.chart_candlestick import plot_candlestick
 from stock_advisor.visuals.chart_volatility import create_volatility_chart
 
 
@@ -31,31 +32,40 @@ def handle_query(
         params = input_data or {}
 
     ticker = params.get("ticker") or params.get("tickers", [None])[0]
+    compare = params.get("compare")
     timeframe = params.get("timeframe", "1mo")
     interval = params.get("interval", "1d")
-    chart_type = params.get("chart_type", "line")
+    chart_type = params.get("chart_type")
 
     logger.debug(
-        "Handling query for %s timeframe=%s interval=%s chart=%s",
-        ticker,
+        "Handling query tickers=%s timeframe=%s interval=%s chart=%s",
+        [ticker, compare] if compare else [ticker],
         timeframe,
         interval,
         chart_type,
     )
 
-    data = fetch_prices(ticker, timeframe, interval)
+    tickers = [t for t in [ticker, compare] if t]
 
-    if chart_type == "bar":
-        fig = create_bar_chart(data)
-    elif chart_type == "volatility":
-        fig = create_volatility_chart(data, ticker)
+    if compare and (
+        ("timeframe" in params and "interval" in params) or chart_type == "line"
+    ):
+        fig = chart_line(tickers, timeframe, interval)
+    elif chart_type in {"bar", "comparison"} or (
+        compare and not ("timeframe" in params and "interval" in params)
+    ):
+        fig = plot_peer_comparison(tickers, timeframe)
+    elif chart_type == "line":
+        fig = chart_line(tickers, timeframe, interval)
     else:
-        fig = create_line_chart(data, ticker)
+        fig = plot_candlestick(ticker, timeframe, interval)
+
+    data = fetch_prices(ticker, timeframe, interval)
 
     summary = generate_insights(data)
 
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    slug = f"{ticker}_{timeframe}_{interval}"
+    slug = f"{'_'.join(tickers)}_{timeframe}_{interval}"
     html_path = Path(output_dir) / f"{slug}.html"
     fig.write_html(str(html_path))
     md_path = Path(output_dir) / f"{slug}.md"
