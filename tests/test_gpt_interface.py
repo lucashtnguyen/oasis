@@ -41,6 +41,24 @@ def test_interpret_prompt_empty(monkeypatch):
     assert result == {}
 
 
+def test_interpret_prompt_compare(monkeypatch):
+    """Parse comparative query without GPT."""
+
+    class FailingClient:
+        def chat(self, *args, **kwargs):
+            raise RuntimeError("fail")
+
+    monkeypatch.setattr(
+        "stock_advisor.api.gpt_interface.OpenAIClient", lambda: FailingClient()
+    )
+    prompt = "show me MSFT vs AAPL for the last 1 day, 5 min chart"
+    result = interpret_prompt(prompt)
+    assert result["ticker"] == "MSFT"
+    assert result["compare"] == "AAPL"
+    assert result["timeframe"] == "1d"
+    assert result["interval"] == "5m"
+
+
 @pytest.mark.integration_openai
 def test_interpret_prompt_integration(monkeypatch):
     """Call OpenAI if configured."""
