@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 from stock_advisor import __main__
+import stock_advisor.api.query
 
 
 class DummyFig:
@@ -32,7 +33,7 @@ def test_handle_query_creates_files(tmp_path, monkeypatch):
     monkeypatch.setattr(__main__, "generate_insights", lambda df: "summary")
     monkeypatch.setattr(__main__, "create_line_chart", lambda df: DummyFig())
 
-    html, md = __main__.handle_query(query="test", output_dir=tmp_path)
+    html, md = stock_advisor.api.query.handle_query(query="test", output_dir=tmp_path)
     assert Path(html).exists()
     assert Path(md).exists()
 
