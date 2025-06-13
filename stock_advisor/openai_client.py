@@ -51,7 +51,7 @@ class OpenAIClient:
                     params["functions"] = functions
                 if function_call is not None:
                     params["function_call"] = function_call
-                return openai.ChatCompletion.create(**params)
+                return openai.chat.completions.create(**params)
             except Exception as exc:  # pragma: no cover - network issues
                 last_exc = exc
                 if exc.__class__.__name__ == "RateLimitError":
