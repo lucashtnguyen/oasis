@@ -9,7 +9,7 @@ dependencies = [
     "openai==1.58",
     "pandas==2.2.2",
     "plotly==5.22.0",
-    "yfinance==0.2.37",
+    "yfinance>=0.2.57",
     "python-dotenv==1.0.1",
     "pydantic-settings==2.2.1",
 ]
