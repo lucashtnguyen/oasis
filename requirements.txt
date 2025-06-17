@@ -2,6 +2,7 @@
 pandas==2.2.2
 plotly==5.22.0
 yfinance>=0.2.57
+click>=8.2
 
 # OpenAI function-calling
 openai>=1.58
