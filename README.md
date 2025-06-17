@@ -1,11 +1,4 @@
 # Stock Advisor
-
-You’re right — here’s the **balanced** version: technically sharp, purpose-driven, and with just the right amount of fun baked in.
-
----
-
-**Project Preamble — ChatGPT Stock Advisor**
-
 *ChatGPT Stock Advisor* wasn’t built to chart stocks—it was built to **show what modern Python development looks like when you put Codex in the passenger seat and keep both hands on the wheel**. This project showcases a clean, test-driven workflow using **Python 3.12**, **Plotly**, **click**, **`pytest`**, and **OpenAI’s function-calling API**, all wrapped in a modular CLI tool that turns plain English prompts like “Show me the 5-minute chart for MSFT today” into interactive charts and GPT-powered summaries. The goal? Not to reinvent the wheel—but to **explore rapidly growing  tools that matter**: Codex-assisted scaffolding, TDD, reproducible outputs, and AI-enhanced logic that plays nice with version control. Every part of the system—from data fetching to visualization—is built for clarity, modularity, and ease of extension. And in case you're wondering how much of this was vibes vs. design, the full trail of Codex prompts lives in `/prompt-logs`. These prompts were designed as though Codex is a junior level engineer, to maintain clarity and mission in it's work product. 
 
 
