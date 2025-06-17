@@ -1,10 +1,9 @@
 """Tests for CLI module."""
 
-import sys
-import json
 from pathlib import Path
 
 import pandas as pd
+from click.testing import CliRunner
 from stock_advisor import __main__
 import stock_advisor.api.query
 
@@ -26,30 +25,23 @@ def test_handle_query_creates_files(tmp_path, monkeypatch):
             "chart_type": "line",
         }
 
-    monkeypatch.setattr(__main__, "interpret_prompt", dummy_interpret)
+    monkeypatch.setattr(stock_advisor.api.query, "interpret_prompt", dummy_interpret)
     monkeypatch.setattr(
-        __main__, "fetch_prices", lambda *a, **k: pd.DataFrame({"Close": [1, 2, 3]})
+        stock_advisor.api.query,
+        "fetch_prices",
+        lambda *a, **k: pd.DataFrame({"Close": [1, 2, 3]}),
     )
-    monkeypatch.setattr(__main__, "generate_insights", lambda df: "summary")
-    monkeypatch.setattr(__main__, "create_line_chart", lambda df: DummyFig())
+    monkeypatch.setattr(stock_advisor.api.query, "generate_insights", lambda df: "summary")
+    monkeypatch.setattr(stock_advisor.api.query, "chart_line", lambda *a, **k: DummyFig())
 
     html, md = stock_advisor.api.query.handle_query(query="test", output_dir=tmp_path)
     assert Path(html).exists()
     assert Path(md).exists()
 
 
-def test_main_cli(monkeypatch, capsys):
+def test_main_cli(monkeypatch):
+    runner = CliRunner()
     monkeypatch.setattr(__main__, "handle_query", lambda **kwargs: ("a.html", "a.md"))
-    monkeypatch.setattr(
-        "sys.argv",
-        [
-            "prog",
-            "--query",
-            "Show AAPL",
-            "--output_dir",
-            "out",
-        ],
-    )
-    __main__.main()
-    captured = capsys.readouterr()
-    assert "Chart:" in captured.out
+    result = runner.invoke(__main__.main, ["--query", "Show AAPL", "--output-dir", "out"])
+    assert result.exit_code == 0
+    assert "Chart:" in result.output
