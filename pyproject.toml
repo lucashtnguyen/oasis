@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 authors = [{name = "Oasis Contributors"}]
 dependencies = [
-    "openai==1.58",
+    "openai>=1.58",
     "pandas==2.2.2",
     "plotly==5.22.0",
     "yfinance>=0.2.57",

@@ -28,7 +28,7 @@ def chart_line(tickers: list[str], timeframe: str, interval: str) -> go.Figure:
         data = fetch_prices(tk, timeframe, interval)
         if not data.empty and "Close" in data:
             fig.add_trace(
-                go.Scatter(x=data.index, y=data["Close"], mode="lines", name=tk)
+                go.Scatter(x=data.index, y=data["Close"][tk], mode="lines", name=tk)
             )
     return fig
 

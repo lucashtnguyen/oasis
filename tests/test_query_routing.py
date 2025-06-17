@@ -40,13 +40,9 @@ def test_route_single_candlestick(tmp_path, monkeypatch):
         return _inner
 
     _patch_common(monkeypatch)
-    monkeypatch.setattr(
-        "stock_advisor.api.query.plot_candlestick", dummy("candle")
-    )
+    monkeypatch.setattr("stock_advisor.api.query.create_candlestick", dummy("candle"))
     monkeypatch.setattr("stock_advisor.api.query.chart_line", dummy("line"))
-    monkeypatch.setattr(
-        "stock_advisor.api.query.plot_peer_comparison", dummy("bar")
-    )
+    monkeypatch.setattr("stock_advisor.api.query.plot_peer_comparison", dummy("bar"))
 
     handle_query(input_data={"ticker": "AAPL"}, output_dir=tmp_path)
     assert called.get("candle")
@@ -66,12 +62,8 @@ def test_route_line_introspection(tmp_path, monkeypatch):
 
     _patch_common(monkeypatch)
     monkeypatch.setattr("stock_advisor.api.query.chart_line", dummy("line"))
-    monkeypatch.setattr(
-        "stock_advisor.api.query.plot_peer_comparison", dummy("bar")
-    )
-    monkeypatch.setattr(
-        "stock_advisor.api.query.plot_candlestick", dummy("candle")
-    )
+    monkeypatch.setattr("stock_advisor.api.query.plot_peer_comparison", dummy("bar"))
+    monkeypatch.setattr("stock_advisor.api.query.create_candlestick", dummy("candle"))
 
     handle_query(
         input_data={
@@ -98,13 +90,9 @@ def test_route_general_comparison(tmp_path, monkeypatch):
         return _inner
 
     _patch_common(monkeypatch)
-    monkeypatch.setattr(
-        "stock_advisor.api.query.plot_peer_comparison", dummy("bar")
-    )
+    monkeypatch.setattr("stock_advisor.api.query.plot_peer_comparison", dummy("bar"))
     monkeypatch.setattr("stock_advisor.api.query.chart_line", dummy("line"))
-    monkeypatch.setattr(
-        "stock_advisor.api.query.plot_candlestick", dummy("candle")
-    )
+    monkeypatch.setattr("stock_advisor.api.query.create_candlestick", dummy("candle"))
 
     handle_query(
         input_data={"ticker": "MSFT", "compare": "AAPL"},
