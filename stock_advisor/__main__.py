@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-import argparse
 import io
 import json
 import logging
 import os
+from pathlib import Path
 
-from stock_advisor.api.gpt_interface import interpret_prompt
-from stock_advisor.api.stock_fetch import fetch_prices
-from stock_advisor.api.insights import generate_insights
-from stock_advisor.visuals.chart_line import create_line_chart
+import click
+
 from stock_advisor.api.query import handle_query
 
 
@@ -26,38 +24,47 @@ if DEBUG:  # pragma: no cover - debug scaffold
     logger.addHandler(handler)
 
 
-def main(argv: list[str] | None = None) -> None:
+@click.command(context_settings={"auto_envvar_prefix": "STOCK_ADVISOR"})
+@click.option("--query", type=str, help="Natural language query")
+@click.option("--input", "input_json", type=str, help="JSON input string")
+@click.option(
+    "--output-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default="output",
+    help="Output directory",
+)
+@click.option("--use-env/--no-env", default=True, help="Load .env file")
+def main(query: str | None, input_json: str | None, output_dir: Path, use_env: bool) -> None:
     """Run the command-line interface."""
-    parser = argparse.ArgumentParser(description="Stock Advisor CLI")
-    parser.add_argument("--query", help="Natural language query")
-    parser.add_argument("--input", help="JSON input string")
-    parser.add_argument("--output_dir", default="output", help="Output directory")
-    parser.add_argument("--show", action="store_true", help="Display chart")
-    parser.add_argument(
-        "--use-env",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Load variables from .env (default) or rely solely on OS env vars.",
+    logger.debug(
+        "CLI called with query=%s input=%s output=%s use_env=%s",
+        query,
+        input_json,
+        output_dir,
+        use_env,
     )
-    args = parser.parse_args(argv)
 
-    logger.debug("CLI called with %s", args)
-
-    if not args.use_env:
+    if not use_env:
         os.environ.pop("PYTHON_DOTENV", None)
 
     input_data = None
-    if args.input:
-        input_data = json.loads(args.input)
+    if input_json:
+        try:
+            input_data = json.loads(input_json)
+        except json.JSONDecodeError as exc:
+            raise click.BadParameter(f"Invalid JSON: {exc}") from exc
+
+    if not (query or input_data):
+        raise click.UsageError("Either --query or --input is required")
 
     html_path, md_path = handle_query(
-        query=args.query,
+        query=query,
         input_data=input_data,
-        output_dir=args.output_dir,
-        show=args.show,
+        output_dir=str(output_dir),
+        show=False,
     )
 
-    print(f"Chart: {html_path}\nSummary: {md_path}")
+    click.echo(f"Chart: {html_path}\nSummary: {md_path}")
 
 
 if __name__ == "__main__":
