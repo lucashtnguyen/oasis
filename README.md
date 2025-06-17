@@ -43,8 +43,10 @@ pre-commit install
 5. **Run example**
 
 ```bash
-python -m stock_advisor --query "Show me AAPL for last week" --output_dir output
+stock_advisor --query "show me MSFT for the last day, 5 minute chart"
 ```
+
+![MSFT](https://github.com/lucashtnguyen/oasis/blob/main/stock_advisor/images/show-me-msft.png "MSFT")
 
 ```yaml
 # ── Secrets in CI ───────────────────────
@@ -53,9 +55,5 @@ env:
   RUN_OPENAI_TESTS: "true"
 ```
 
-```bash
-stock_advisor --query "show me MSFT for the last day, 5 minute chart"
-```
 
-![MSFT](https://github.com/lucashtnguyen/oasis/blob/main/stock_advisor/images/show-me-msft.png "MSFT")
 
