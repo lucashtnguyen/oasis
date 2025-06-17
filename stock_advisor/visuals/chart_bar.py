@@ -27,8 +27,8 @@ def plot_peer_comparison(tickers: list[str], timeframe: str) -> go.Figure:
     for tk in tickers:
         data = fetch_prices(tk, timeframe, "1d")
         if not data.empty and "Close" in data:
-            start = data["Close"].iloc[0]
-            end = data["Close"].iloc[-1]
+            start = data["Close"][tk].iloc[0]
+            end = data["Close"][tk].iloc[-1]
             if start != 0:
                 returns[tk] = (end - start) / start * 100
     fig = go.Figure(go.Bar(x=list(returns.keys()), y=list(returns.values())))

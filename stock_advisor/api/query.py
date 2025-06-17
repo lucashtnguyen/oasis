@@ -4,7 +4,7 @@ from stock_advisor.api.insights import generate_insights
 from stock_advisor.api.stock_fetch import fetch_prices
 from stock_advisor.visuals.chart_bar import plot_peer_comparison
 from stock_advisor.visuals.chart_line import chart_line
-from stock_advisor.visuals.chart_candlestick import plot_candlestick
+from stock_advisor.visuals.chart_candlestick import create_candlestick
 from stock_advisor.visuals.chart_volatility import create_volatility_chart
 
 
@@ -46,6 +46,7 @@ def handle_query(
     )
 
     tickers = [t for t in [ticker, compare] if t]
+    data = fetch_prices(tickers, timeframe, interval)
 
     if compare and (
         ("timeframe" in params and "interval" in params) or chart_type == "line"
@@ -55,21 +56,26 @@ def handle_query(
         compare and not ("timeframe" in params and "interval" in params)
     ):
         fig = plot_peer_comparison(tickers, timeframe)
+    elif not compare and ("timeframe" in params and "interval" in params):
+        fig = create_candlestick(ticker, timeframe, interval)
     elif chart_type == "line":
         fig = chart_line(tickers, timeframe, interval)
+    elif chart_type == "volatility":
+        fig = create_volatility_chart(data, ticker)
     else:
-        fig = plot_candlestick(ticker, timeframe, interval)
-
-    data = fetch_prices(ticker, timeframe, interval)
+        fig = create_candlestick(ticker, timeframe, interval)
 
     summary = generate_insights(data)
 
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    slug = f"{'_'.join(tickers)}_{timeframe}_{interval}"
-    html_path = Path(output_dir) / f"{slug}.html"
-    fig.write_html(str(html_path))
-    md_path = Path(output_dir) / f"{slug}.md"
-    md_path.write_text(summary)
+    html_path = None
+    md_path = None
+    if output_dir is not None:
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        slug = f"{'_'.join(tickers)}_{timeframe}_{interval}"
+        html_path = Path(output_dir) / f"{slug}.html"
+        fig.write_html(str(html_path))
+        md_path = Path(output_dir) / f"{slug}.md"
+        md_path.write_text(summary)
     if show:
         try:  # pragma: no cover - optional UI
             fig.show()

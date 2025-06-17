@@ -20,7 +20,7 @@ if DEBUG:
     logger.addHandler(handler)
 
 
-def plot_candlestick(ticker: str, timeframe: str, interval: str) -> go.Figure:
+def create_candlestick(ticker: str, timeframe: str, interval: str) -> go.Figure:
     """Render an interactive OHLC candlestick chart."""
     logger.debug("Creating candlestick for %s", ticker)
     data = fetch_prices(ticker, timeframe, interval)
@@ -29,10 +29,10 @@ def plot_candlestick(ticker: str, timeframe: str, interval: str) -> go.Figure:
         fig.add_trace(
             go.Candlestick(
                 x=data.index,
-                open=data["Open"],
-                high=data["High"],
-                low=data["Low"],
-                close=data["Close"],
+                open=data["Open"][ticker],
+                high=data["High"][ticker],
+                low=data["Low"][ticker],
+                close=data["Close"][ticker],
                 name=ticker,
             )
         )
