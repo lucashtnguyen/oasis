@@ -57,5 +57,5 @@ env:
 stock_advisor --query "show me MSFT for the last day, 5 minute chart"
 ```
 
-![MSFT](https://github.com/lucashtnguyen/oasis/images/show-me-msft.png "MSFT")
+![MSFT](https://github.com/lucashtnguyen/oasis/stock_advisor/images/show-me-msft.png "MSFT")
 
