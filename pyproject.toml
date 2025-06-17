@@ -12,6 +12,7 @@ dependencies = [
     "yfinance>=0.2.57",
     "python-dotenv==1.0.1",
     "pydantic-settings==2.2.1",
+    "click>=8.2",
 ]
 
 [project.optional-dependencies]
@@ -29,3 +30,5 @@ testpaths = ["tests"]
 [tool.black]
 line-length = 88
 
+[project.scripts]
+stock_advisor = "stock_advisor.__main__:main"
